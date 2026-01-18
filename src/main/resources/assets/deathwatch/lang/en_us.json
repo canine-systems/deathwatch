@@ -1,0 +1,13 @@
+{
+  "itemGroup.deathwatch": "Example Mod Tab",
+  "block.deathwatch.example_block": "Example Block",
+  "item.deathwatch.example_item": "Example Item",
+
+  "deathwatch.configuration.title": "Death Watch Configs",
+  "deathwatch.configuration.section.deathwatch.common.toml": "Death Watch Configs",
+  "deathwatch.configuration.section.deathwatch.common.toml.title": "Death Watch Configs",
+  "deathwatch.configuration.items": "Item List",
+  "deathwatch.configuration.logDirtBlock": "Log Dirt Block",
+  "deathwatch.configuration.magicNumberIntroduction": "Magic Number Text",
+  "deathwatch.configuration.magicNumber": "Magic Number"
+}
