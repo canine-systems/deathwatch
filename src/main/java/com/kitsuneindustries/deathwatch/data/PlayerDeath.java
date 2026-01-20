@@ -1,6 +1,5 @@
 package com.kitsuneindustries.deathwatch.data;
 
-import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
@@ -20,110 +19,108 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
 @jakarta.persistence.Entity // Specified out here to avoid confusion with Minecraft's Entity definition
-public class PlayerDeath implements Serializable {
+public class PlayerDeath {
 
-  private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Nonnull
+    private UUID id;
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  @Nonnull
-  private UUID id;
+    @Nonnull
+    private Date timestamp;
 
-  @Nonnull
-  private Date timestamp;
+    @Nonnull
+    private UUID playerUUID;
 
-  @Nonnull
-  private UUID playerUUID;
+    @Nonnull
+    private String playerName;
 
-  @Nonnull
-  private String playerName;
+    @Nonnull
+    private String dimension;
 
-  @Nonnull
-  private String dimension;
+    @Convert(converter = Vec3Converter.class)
+    @Nonnull
+    private Vec3 position;
 
-  @Convert(converter = Vec3Converter.class)
-  @Nonnull
-  private Vec3 position;
+    @Nullable
+    private String type;
 
-  @Nullable
-  private String type;
+    @Nullable
+    private String killer;
 
-  @Nullable
-  private String killer;
+    @Nullable
+    private String message;
 
-  @Nullable
-  private String message;
-
-  protected PlayerDeath() {
-  }
-
-  private PlayerDeath(UUID playerUUID, String playerName, String dimension, Vec3 position, String type, String killer,
-    String message) {
-    this.id = UUID.randomUUID();
-    this.timestamp = Calendar.getInstance().getTime();
-    this.playerUUID = playerUUID;
-    this.playerName = playerName;
-    this.dimension = dimension;
-    this.position = position;
-    this.type = type;
-    this.killer = killer;
-    this.message = message;
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder builder = new StringBuilder();
-
-    builder.append(String.format("%s - %s(%s) ", timestamp, playerName, playerUUID));
-    builder.append(String.format("died at [%f, %f, %f] ", position.x(), position.y(), position.z()));
-
-    if (dimension != null) {
-      builder.append(String.format("in %s ", dimension));
+    protected PlayerDeath() {
     }
 
-    if (type != null) {
-      builder.append(String.format("Damage type: %s ", type));
+    private PlayerDeath(UUID playerUUID, String playerName, String dimension, Vec3 position, String type, String killer,
+        String message) {
+        this.id = UUID.randomUUID();
+        this.timestamp = Calendar.getInstance().getTime();
+        this.playerUUID = playerUUID;
+        this.playerName = playerName;
+        this.dimension = dimension;
+        this.position = position;
+        this.type = type;
+        this.killer = killer;
+        this.message = message;
     }
 
-    if (killer != null) {
-      builder.append(String.format("Killer: %s ", killer));
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(String.format("%s - %s(%s) ", timestamp, playerName, playerUUID));
+        builder.append(String.format("died at [%f, %f, %f] ", position.x(), position.y(), position.z()));
+
+        if (dimension != null) {
+            builder.append(String.format("in %s ", dimension));
+        }
+
+        if (type != null) {
+            builder.append(String.format("Damage type: %s ", type));
+        }
+
+        if (killer != null) {
+            builder.append(String.format("Killer: %s ", killer));
+        }
+
+        if (message != null) {
+            builder.append(String.format("Message: %s ", message));
+        }
+
+        return builder.toString();
     }
 
-    if (message != null) {
-      builder.append(String.format("Message: %s ", message));
+    public static Builder newBuilder(@Nonnull Player player) {
+        return new Builder(player);
     }
 
-    return builder.toString();
-  }
+    public static class Builder {
+        private Player player;
+        private DamageSource source;
 
-  public static Builder newBuilder(@Nonnull Player player) {
-    return new Builder(player);
-  }
+        public Builder(@Nonnull Player player) {
+            this.player = player;
+        }
 
-  public static class Builder {
-    private Player player;
-    private DamageSource source;
+        public Builder source(DamageSource source) {
+            this.source = source;
+            return this;
+        }
 
-    public Builder(@Nonnull Player player) {
-      this.player = player;
+        public PlayerDeath build() {
+            Entity killer = source != null ? source.getEntity() : null;
+
+            return new PlayerDeath(player.getUUID(), player.getDisplayName().getString(),
+                player.level().dimension().location().toString(), // Dimension name
+                player.position(),
+                source != null ? source.type().msgId() : null, // Damage type
+                killer != null ? killer.getDisplayName().getString() : null, // killer
+                player.getCombatTracker().getDeathMessage().getString() // Death message
+            );
+        }
     }
-
-    public Builder source(DamageSource source) {
-      this.source = source;
-      return this;
-    }
-
-    public PlayerDeath build() {
-      Entity killer = source != null ? source.getEntity() : null;
-
-      return new PlayerDeath(player.getUUID(), player.getDisplayName().getString(),
-        player.level().dimension().location().toString(), // Dimension name
-        player.position(),
-        source != null ? source.type().msgId() : null, // Damage type
-        killer != null ? killer.getDisplayName().getString() : null, // killer
-        player.getCombatTracker().getDeathMessage().getString() // Death message
-      );
-    }
-  }
 
 }

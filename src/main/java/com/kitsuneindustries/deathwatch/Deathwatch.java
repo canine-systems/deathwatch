@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 
 import com.kitsuneindustries.deathwatch.command.DeathwatchCommand;
 import com.kitsuneindustries.deathwatch.data.DeathRepository;
+import com.kitsuneindustries.deathwatch.data.PersistenceHelper;
 import com.kitsuneindustries.deathwatch.data.PlayerDeath;
 import com.mojang.logging.LogUtils;
 
@@ -17,6 +18,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
@@ -25,6 +27,7 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(value = Deathwatch.MODID)
 public class Deathwatch {
+
     // Define mod id in a common place for everything to reference
     public static final String MODID = "deathwatch";
     // Directly reference a slf4j logger
@@ -37,6 +40,11 @@ public class Deathwatch {
     // FML will recognize some parameter types like IEventBus or ModContainer and
     // pass them in automatically.
     public Deathwatch(IEventBus modEventBus, ModContainer modContainer) {
+
+        // Register our mod's ModConfigSpec so that FML can create and load the config
+        // file for us
+        modContainer.registerConfig(ModConfig.Type.COMMON,
+            Config.SPEC);
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
@@ -56,10 +64,6 @@ public class Deathwatch {
          *
          * // Register the item to a creative tab
          * modEventBus.addListener(this::addCreative);
-         *
-         * // Register our mod's ModConfigSpec so that FML can create and load the
-         * config file for us modContainer.registerConfig(ModConfig.Type.COMMON,
-         * Config.SPEC);
          */
     }
 
@@ -83,13 +87,15 @@ public class Deathwatch {
     public void onServerStarting(ServerStartingEvent event) {
         // Do something when the server starts
         LOGGER.info("Hi from Deathwatch!");
-        graveyard = new DeathRepository();
-        try {
-            graveyard.setUp();
-        } catch (Exception e) {
-            LOGGER.error("Error connecting to the persistence unit!", e);
-            event.getServer().stopServer();
-        }
+        /*
+         * graveyard = new DeathRepository(); try { graveyard.setUp(); } catch
+         * (Exception e) { LOGGER.error("Error connecting to the persistence unit!", e);
+         * event.getServer().stopServer(); }
+         */
+
+        // getSessionFactory();
+
+        PersistenceHelper.setup();
     }
 
     @SubscribeEvent
@@ -111,7 +117,7 @@ public class Deathwatch {
         DamageSource source = event.getSource();
         PlayerDeath death = PlayerDeath.newBuilder(player).source(source).build();
 
-        graveyard.create(death);
+        // graveyard.create(death);
 
         LOGGER.info("Logging Death: {}", death);
 
