@@ -2,6 +2,7 @@ package com.kitsuneindustries.deathwatch.data;
 
 import java.util.UUID;
 
+import jakarta.persistence.Basic;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 
@@ -11,8 +12,22 @@ public class Player {
     @Id
     UUID uuid;
 
-    @NotNull
+    @Basic(optional = false)
     String displayName;
+
+    public UUID getUUID() {
+        return uuid;
+    }
+
+    @NotNull
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    /*
+     * public net.minecraft.world.entity.player.Player toMinecraftPlayer() {
+     * net.minecraft.world.entity.player.Player }
+     */
 
     Player() {
     }

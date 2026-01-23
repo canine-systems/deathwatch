@@ -14,26 +14,33 @@ public class Config {
     public static final ModConfigSpec.ConfigValue<String> JDBC_URL = BUILDER
         .comment("JDBC compatable URL for the database to store deaths in",
             "You can specify the world save folder by using '{{SAVE}}'")
-        .define("jdbcUrl", "jdbc:h2:{{SAVE}}");
+        .worldRestart()
+        .define("jdbcUrl", "jdbc:h2:mem:test");
+    // .define("jdbcUrl", "jdbc:h2:{{SAVE}}/deathwatch.db");
 
     public static final ModConfigSpec.ConfigValue<String> JDBC_USER = BUILDER
         .comment("Database username")
+        .worldRestart()
         .define("jdbcUser", "");
 
     public static final ModConfigSpec.ConfigValue<String> JDBC_PASS = BUILDER
         .comment("Database password")
+        .worldRestart()
         .define("jdbcPassword", "");
 
     public static final ModConfigSpec.BooleanValue SHOW_SQL = BUILDER
         .comment("Show SQL in log file")
+        .worldRestart()
         .define("showSql", true);
 
     public static final ModConfigSpec.BooleanValue FORMAT_SQL = BUILDER
         .comment("Format SQL in log file")
+        .worldRestart()
         .define("formatSql", true);
 
     public static final ModConfigSpec.BooleanValue HIGHLIGHT_SQL = BUILDER
         .comment("Highlight SQL in log file")
+        .worldRestart()
         .define("highlightSql", true);
 
     public static final ModConfigSpec.BooleanValue LOG_DIRT_BLOCK = BUILDER
@@ -58,4 +65,31 @@ public class Config {
     private static boolean validateItemName(final Object obj) {
         return obj instanceof String itemName && BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(itemName));
     }
+
+    public static String JDBC_URL_FORMAT() {
+        // Minecraft.getInstance().gameDirectory;
+
+        return JDBC_URL.get().replace("{{SAVE}}", "/tmp");
+    }
+
+    /*
+     * I am grumpy about not being able to do this...
+     */
+    /*
+     * public static class JdbcURLValue extends ConfigValue<String> implements
+     * Supplier<String> {
+     *
+     * JdbcURLValue(Builder parent, List<String> path, Supplier<String>
+     * defaultSupplier) {
+     * super(parent, path, defaultSupplier);
+     * }
+     *
+     * @Override
+     * public String getRaw(com.electronwill.nightconfig.core.Config config,
+     * List<String> path,
+     * Supplier<String> defaultSupplier) {
+     * return config.getOrElse(path, () -> defaultSupplier.get());
+     * }
+     * }
+     */
 }

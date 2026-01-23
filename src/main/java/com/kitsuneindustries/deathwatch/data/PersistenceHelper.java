@@ -21,10 +21,11 @@ public class PersistenceHelper {
     public static void setup() {
         try {
             PersistenceConfiguration config = new PersistenceConfiguration(UNIT_NAME)
+                .managedClass(Player.class)
                 .managedClass(PlayerDeath.class)
                 .property(PersistenceConfiguration.JDBC_URL, Config.JDBC_URL.get())
                 .property(PersistenceConfiguration.JDBC_USER, Config.JDBC_USER.get())
-                .property(PersistenceConfiguration.JDBC_PASSWORD, Config.JDBC_URL.get());
+                .property(PersistenceConfiguration.JDBC_PASSWORD, Config.JDBC_PASS.get());
             /*
              * Configuration config = new Configuration()
              * .addAnnotatedClass(PlayerDeath.class)
@@ -39,14 +40,6 @@ public class PersistenceHelper {
             // PersistenceHelper.sessionFactory = config.buildSessionFactory();
             emFactory = config.createEntityManagerFactory();
 
-            /*
-             * PersistenceHelper.sessionFactory = new
-             * HibernatePersistenceConfiguration("com.kitsuneindustries.deathwatch")
-             * .jdbcUrl(Config.JDBC_URL.get()) .jdbcUsername(Config.JDBC_USER.get())
-             * .jdbcPassword(Config.JDBC_PASS.get()) .jdbcPoolSize(2) .showSql(
-             * Config.SHOW_SQL.get(), Config.FORMAT_SQL.get(), Config.HIGHLIGHT_SQL.get())
-             * .createEntityManagerFactory();
-             */
         } catch (Exception e) {
             LOGGER.error("Error setting up hibernate:", e);
         }
@@ -59,13 +52,4 @@ public class PersistenceHelper {
         setup();
         return emFactory.createEntityManager();
     }
-    /*
-     * public static Session getSession() throws HibernateException { if (emFactory
-     * == null) { LOGGER.
-     * error("Attempted to get session before PersistenceHelper was ready. This shouldn't happen!!"
-     * ); } setup(); emFactory. if (sessionFactory == null) { setup(); }
-     * 
-     * return sessionFactory.openSession(); }
-     */
-
 }

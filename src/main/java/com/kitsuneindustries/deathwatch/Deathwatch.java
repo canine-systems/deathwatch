@@ -1,5 +1,6 @@
 package com.kitsuneindustries.deathwatch;
 
+import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
 
 import com.kitsuneindustries.deathwatch.command.DeathwatchCommand;
@@ -8,6 +9,7 @@ import com.kitsuneindustries.deathwatch.data.PersistenceHelper;
 import com.kitsuneindustries.deathwatch.data.PlayerDeath;
 import com.mojang.logging.LogUtils;
 
+import jakarta.inject.Inject;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.world.damagesource.DamageSource;
@@ -33,7 +35,8 @@ public class Deathwatch {
     // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public static DeathRepository graveyard;
+    @Inject
+    DeathRepository graveyard;
 
     // The constructor for the mod class is the first code that is run when your mod
     // is loaded.
@@ -87,14 +90,14 @@ public class Deathwatch {
     public void onServerStarting(ServerStartingEvent event) {
         // Do something when the server starts
         LOGGER.info("Hi from Deathwatch!");
-        /*
-         * graveyard = new DeathRepository(); try { graveyard.setUp(); } catch
-         * (Exception e) { LOGGER.error("Error connecting to the persistence unit!", e);
-         * event.getServer().stopServer(); }
-         */
 
-        // getSessionFactory();
+        Server webserver = new Server(8080);
 
+        try {
+            webserver.start();
+        } catch (Exception e) {
+            LOGGER.error("Error starting embedded web server", e);
+        }
         PersistenceHelper.setup();
     }
 
@@ -117,8 +120,7 @@ public class Deathwatch {
         DamageSource source = event.getSource();
         PlayerDeath death = PlayerDeath.newBuilder(player).source(source).build();
 
-        // graveyard.create(death);
-
+        graveyard.add(death);
         LOGGER.info("Logging Death: {}", death);
 
         entity.getServer().getPlayerList().broadcastSystemMessage(
