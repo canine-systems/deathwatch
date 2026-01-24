@@ -120,8 +120,12 @@ public class Deathwatch {
         DamageSource source = event.getSource();
         PlayerDeath death = PlayerDeath.newBuilder(player).source(source).build();
 
-        graveyard.add(death);
-        LOGGER.info("Logging Death: {}", death);
+        try {
+            graveyard.add(death);
+            LOGGER.info("Logging Death: {}", death);
+        } catch (Exception e) {
+            LOGGER.error("Failed to log player death", e);
+        }
 
         entity.getServer().getPlayerList().broadcastSystemMessage(
             MutableComponent.create(PlainTextContents.create(death.toString())), false);
