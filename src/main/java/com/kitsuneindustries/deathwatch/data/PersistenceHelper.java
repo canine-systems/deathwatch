@@ -1,5 +1,6 @@
 package com.kitsuneindustries.deathwatch.data;
 
+import org.hibernate.jpa.HibernatePersistenceConfiguration;
 import org.slf4j.Logger;
 
 import com.kitsuneindustries.deathwatch.Config;
@@ -7,7 +8,6 @@ import com.mojang.logging.LogUtils;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.PersistenceConfiguration;
 
 public class PersistenceHelper {
 
@@ -20,23 +20,12 @@ public class PersistenceHelper {
 
     public static void setup() {
         try {
-            PersistenceConfiguration config = new PersistenceConfiguration(UNIT_NAME)
+            HibernatePersistenceConfiguration config = new HibernatePersistenceConfiguration(UNIT_NAME)
                 .managedClass(Player.class)
                 .managedClass(PlayerDeath.class)
-                .property(PersistenceConfiguration.JDBC_URL, Config.JDBC_URL.get())
-                .property(PersistenceConfiguration.JDBC_USER, Config.JDBC_USER.get())
-                .property(PersistenceConfiguration.JDBC_PASSWORD, Config.JDBC_PASS.get());
-            /*
-             * Configuration config = new Configuration()
-             * .addAnnotatedClass(PlayerDeath.class)
-             * .setProperty(AvailableSettings.PERSISTENCE_UNIT_NAME,
-             * "com.kitsuneindustries.deathwatch")
-             * .setProperty(AvailableSettings.JAKARTA_JDBC_URL, Config.JDBC_URL.get())
-             * .setProperty(AvailableSettings.JAKARTA_JDBC_USER, Config.JDBC_USER.get())
-             * .setProperty(AvailableSettings.JAKARTA_JDBC_PASSWORD, Config.JDBC_USER.get())
-             * .setProperty(AvailableSettings.POOL_SIZE, 2) .showSql( Config.SHOW_SQL.get(),
-             * Config.FORMAT_SQL.get(), Config.HIGHLIGHT_SQL.get());
-             */
+                .jdbcUrl(Config.JDBC_URL.get())
+                .jdbcCredentials(Config.JDBC_USER.get(), Config.JDBC_PASS.get());
+
             // PersistenceHelper.sessionFactory = config.buildSessionFactory();
             emFactory = config.createEntityManagerFactory();
 
