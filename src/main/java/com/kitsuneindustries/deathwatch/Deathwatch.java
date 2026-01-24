@@ -1,5 +1,6 @@
 package com.kitsuneindustries.deathwatch;
 
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
 
@@ -7,6 +8,7 @@ import com.kitsuneindustries.deathwatch.command.DeathwatchCommand;
 import com.kitsuneindustries.deathwatch.data.DeathRepository;
 import com.kitsuneindustries.deathwatch.data.PersistenceHelper;
 import com.kitsuneindustries.deathwatch.data.PlayerDeath;
+import com.kitsuneindustries.deathwatch.web.DeathwatchServlet;
 import com.mojang.logging.LogUtils;
 
 import jakarta.inject.Inject;
@@ -92,6 +94,10 @@ public class Deathwatch {
         LOGGER.info("Hi from Deathwatch!");
 
         Server webserver = new Server(8080);
+        ServletContextHandler context = new ServletContextHandler();
+        context.setContextPath("/");
+        context.addServlet(DeathwatchServlet.class, "/*");
+        webserver.setHandler(context);
 
         try {
             webserver.start();
