@@ -134,6 +134,8 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
     
+    // We need slf4j 2.0.9, and thus jakarta ee10 libraries, because Minecraft 1.21.1 doesn't like slf4j 2.0.17+. :(
+
     // Servelet spec
     jarJar(implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0')
     additionalRuntimeClasspath 'jakarta.servlet:jakarta.servlet-api:6.1.0'
