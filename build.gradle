@@ -133,53 +133,8 @@ dependencies {
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
-    
-    // We need slf4j 2.0.9, and thus jakarta ee10 libraries, because Minecraft 1.21.1 doesn't like slf4j 2.0.17+. :(
 
-    // Servelet spec
-    jarJar(implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0')
-    additionalRuntimeClasspath 'jakarta.servlet:jakarta.servlet-api:6.1.0'
-    // Jetty embedded server for rest api
-    jarJar(implementation 'org.eclipse.jetty:jetty-server:12.0.7')
-    additionalRuntimeClasspath 'org.eclipse.jetty:jetty-server:12.0.7'
-    
-    jarJar(implementation 'org.eclipse.jetty.ee10:jetty-ee10-servlet:12.0.7')
-    additionalRuntimeClasspath 'org.eclipse.jetty.ee10:jetty-ee10-servlet:12.0.7'
-    
-    jarJar(implementation 'org.eclipse.jetty.ee10:jetty-ee10-annotations:12.0.7')
-    additionalRuntimeClasspath 'org.eclipse.jetty.ee10:jetty-ee10-annotations:12.0.7'
-    
-    jarJar(implementation "org.hibernate.orm:hibernate-core:7.2.1.Final")
-    additionalRuntimeClasspath "org.hibernate.orm:hibernate-core:7.2.1.Final"
-    jarJar(implementation "org.hibernate.orm:hibernate-processor:7.2.1.Final")
-    additionalRuntimeClasspath "org.hibernate.orm:hibernate-processor:7.2.1.Final"
-    
-    
-    // These should allow Entity discovery so we don't need to use managedClass()
-    /*
-    jarJar(implementation 'org.hibernate.orm:hibernate-scan-jandex:7.2.1.Final')
-    additionalRuntimeClasspath 'org.hibernate.orm:hibernate-scan-jandex:7.2.1.Final'
-    */
-    
-    jarJar(implementation "org.hibernate.validator:hibernate-validator:9.1.0.Final")
-    additionalRuntimeClasspath "org.hibernate.validator:hibernate-validator:9.1.0.Final"
-    jarJar(implementation "org.glassfish.expressly:expressly:6.0.0")
-    additionalRuntimeClasspath "org.glassfish.expressly:expressly:6.0.0"
-    jarJar(implementation "org.hibernate:hibernate-validator-cdi:8.0.3.Final")
-    additionalRuntimeClasspath "org.hibernate:hibernate-validator-cdi:8.0.3.Final"
-    
-    jarJar(implementation "jakarta.data:jakarta.data-api:1.0.1")
-    additionalRuntimeClasspath "jakarta.data:jakarta.data-api:1.0.1"
-    jarJar(implementation 'jakarta.enterprise:jakarta.enterprise.cdi-api:4.1.0')
-    additionalRuntimeClasspath 'jakarta.enterprise:jakarta.enterprise.cdi-api:4.1.0'
-    //implementation 'jakarta.el:jakarta.el-api:6.1.0-M1'
-    //additionalRuntimeClasspath 'jakarta.el:jakarta.el-api:6.1.0-M1'
-    
-    annotationProcessor "org.hibernate.orm:hibernate-processor:7.2.1.Final"
-    
-    // H2 database support
-    jarJar(runtimeOnly "com.h2database:h2:2.4.240")
-    additionalRuntimeClasspath "com.h2database:h2:2.4.240"
+    // We need slf4j 2.0.9, and thus jakarta ee10 libraries, because Minecraft 1.21.1 doesn't like slf4j 2.0.17+. :(
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

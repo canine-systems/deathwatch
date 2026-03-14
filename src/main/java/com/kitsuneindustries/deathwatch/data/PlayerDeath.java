@@ -5,80 +5,52 @@ import java.util.Date;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-import com.kitsuneindustries.deathwatch.data.persistence.converter.Vec3Converter;
-
-import jakarta.persistence.Convert;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.NotNull;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
-@jakarta.persistence.Entity // Specified out here to avoid confusion with Minecraft's Entity definition
 public class PlayerDeath {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    private UUID id; // JSON representation can probably use uuid.toString(),
+                     // UUID.fromString(uuid_str)
 
     private Date timestamp;
 
-    @ManyToOne
-    private Player victim;
+    private Victim victim; // needed for victim.getDisplayName(), victim.getUUID();
 
     private String dimension;
 
-    @Convert(converter = Vec3Converter.class)
-    private Vec3 position;
+    private Vec3 position; // needs JSON representation
 
     private String type;
     private String killer;
     private String message;
 
-    @NotNull
-    public UUID getId() {
-        return id;
-    }
-
-    @NotNull
     public Date getTimestamp() {
         return timestamp;
     }
 
-    @NotNull
-    public Player getVictim() {
+    public Victim getVictim() {
         return victim;
     }
 
-    @NotNull
     public String getDimension() {
         return dimension;
     }
 
-    @Nullable
     public String getType() {
         return type;
     }
 
-    @Nullable
     public String getKiller() {
         return killer;
     }
 
-    @Nullable
     public String getMessage() {
         return message;
     }
 
-    public PlayerDeath() {
-    }
-
-    private PlayerDeath(Player victim, String dimension, Vec3 position, String type, String killer,
+    private PlayerDeath(Victim victim, String dimension, Vec3 position, String type, String killer,
         String message) {
         this.id = UUID.randomUUID();
         this.timestamp = Calendar.getInstance().getTime();
@@ -94,7 +66,9 @@ public class PlayerDeath {
     public String toString() {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(String.format("%s - %s(%s) ", timestamp, victim.getDisplayName(), victim.getUUID()));
+        // builder.append(String.format("%s - %s(%s) ", timestamp,
+        // victim.getDisplayName(), victim.getUUID()));
+        builder.append(String.format("%s - %s(%s) ", timestamp, this.victim.getDisplayName(), this.victim.getUUID()));
         builder.append(String.format("died at [%f, %f, %f] ", position.x(), position.y(), position.z()));
 
         if (dimension != null) {
@@ -124,7 +98,7 @@ public class PlayerDeath {
         private net.minecraft.world.entity.player.Player playerEntity;
         private DamageSource source;
 
-        public Builder(@NotNull net.minecraft.world.entity.player.Player playerEntity) {
+        public Builder(net.minecraft.world.entity.player.Player playerEntity) {
             this.playerEntity = playerEntity;
         }
 
@@ -137,7 +111,7 @@ public class PlayerDeath {
             Entity killer = source != null ? source.getEntity() : null;
 
             return new PlayerDeath(
-                new Player(playerEntity),
+                new Victim(playerEntity),
                 playerEntity.level().dimension().location().toString(), // Dimension name
                 playerEntity.position(),
                 source != null ? source.type().msgId() : null, // Damage type

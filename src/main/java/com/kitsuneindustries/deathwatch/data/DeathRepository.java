@@ -5,23 +5,22 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 
+import com.kitsuneindustries.deathwatch.NotImplementedException;
 import com.mojang.logging.LogUtils;
 
-import jakarta.data.repository.Find;
-import jakarta.data.repository.Insert;
-import jakarta.data.repository.Query;
-import jakarta.data.repository.Repository;
-
-@Repository
-public interface DeathRepository {
+public class DeathRepository {
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    @Insert
-    void add(PlayerDeath death);
+    public void add(PlayerDeath death) {
+        LOGGER.info(death.toString());
+    }
 
-    @Find
-    List<PlayerDeath> getAll();
+    List<PlayerDeath> getAll() {
+        throw new NotImplementedException("getAll() has not been implemented. It probably will be eventually.");
+    }
 
-    @Query("from PlayerDeath d join Player p where p.uuid = :playerUUID")
-    List<PlayerDeath> getByPlayerUUID(UUID playerUUID);
+    List<PlayerDeath> getByPlayerUUID(UUID playerUUID) {
+        throw new NotImplementedException(
+            "getPlayerByUUID() has not been implemented. It probably will be eventually.");
+    }
 }
