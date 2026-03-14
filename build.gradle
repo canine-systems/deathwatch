@@ -14,7 +14,7 @@ tasks.named('wrapper', Wrapper).configure {
     distributionType = Wrapper.DistributionType.BIN
 }
 
-version = mod_version
+version = project.hasProperty('version') ? project.getProperty('version') : mod_version
 group = mod_group_id
 
 repositories {
@@ -151,7 +151,7 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             mod_id                 : mod_id,
             mod_name               : mod_name,
             mod_license            : mod_license,
-            mod_version            : mod_version,
+            mod_version            : version,
     ]
     inputs.properties replaceProperties
     expand replaceProperties
