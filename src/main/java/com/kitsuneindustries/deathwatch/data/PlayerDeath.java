@@ -1,19 +1,23 @@
 package com.kitsuneindustries.deathwatch.data;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
 
+import org.spongepowered.include.com.google.common.base.Objects;
+
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
 public class PlayerDeath {
+
     private UUID id; // JSON representation can probably use uuid.toString(),
                      // UUID.fromString(uuid_str)
-
     private Date timestamp;
 
     private Victim victim; // needed for victim.getDisplayName(), victim.getUUID();
@@ -38,6 +42,10 @@ public class PlayerDeath {
         return dimension;
     }
 
+    public Vec3 getPosition() {
+        return position;
+    }
+
     public String getType() {
         return type;
     }
@@ -52,14 +60,32 @@ public class PlayerDeath {
 
     private PlayerDeath(Victim victim, String dimension, Vec3 position, String type, String killer,
         String message) {
-        this.id = UUID.randomUUID();
-        this.timestamp = Calendar.getInstance().getTime();
-        this.victim = victim;
-        this.dimension = dimension;
-        this.position = position;
-        this.type = type;
+        this.id = requireNonNull(UUID.randomUUID(), "UUID cannot be null");
+        this.timestamp = requireNonNull(Calendar.getInstance().getTime(), "Must have a timestamp");
+        this.victim = requireNonNull(victim);
+        this.dimension = requireNonNull(dimension);
+        this.position = requireNonNull(position);
+        this.type = requireNonNull(type);
         this.killer = killer;
         this.message = message;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if ((obj == null) || (getClass() != obj.getClass())) {
+            return false;
+        }
+
+        // Since we know they're the same class...
+        PlayerDeath other = (PlayerDeath) obj;
+        return this.id.equals(other.id)
+            && this.timestamp.equals(other.timestamp)
+            && this.victim.equals(other.victim)
+            && this.dimension.equals(other.dimension)
+            && this.position.equals(other.position)
+            && Objects.equal(this.type, other.type)
+            && Objects.equal(this.killer, other.killer)
+            && Objects.equal(this.message, other.message);
     }
 
     @Override

@@ -5,6 +5,16 @@ plugins {
     id 'idea'
 }
 
+tasks.named('test', Test) {
+    useJUnitPlatform()
+
+    maxHeapSize = '1G'
+
+    testLogging {
+        events "passed"
+    }
+}
+
 tasks.named('wrapper', Wrapper).configure {
     // Define wrapper values here so as to not have to always do so when updating gradlew.properties.
     // Switching this to Wrapper.DistributionType.ALL will download the full gradle sources that comes with
@@ -146,7 +156,17 @@ dependencies {
     // Needed by jackson-databind
     jarJar(implementation "com.fasterxml.jackson.core:jackson-annotations:2.21")
     additionalRuntimeClasspath "com.fasterxml.jackson.core:jackson-annotations:2.21"
+    
+    /*       Testing Dependencies           */
+    testImplementation "org.junit.jupiter:junit-jupiter:5.7.1"
+    testImplementation "org.mockito:mockito-core:5.+"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
 }
+
+dependencies {
+    
+}
+
 
 // This block of code expands all declared replace properties in the specified resource targets.
 // A missing property will result in an error. Properties are expanded using ${} Groovy notation.
