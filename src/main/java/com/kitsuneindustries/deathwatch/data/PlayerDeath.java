@@ -60,12 +60,17 @@ public class PlayerDeath {
 
     private PlayerDeath(Victim victim, String dimension, Vec3 position, String type, String killer,
         String message) {
-        this.id = requireNonNull(UUID.randomUUID(), "UUID cannot be null");
-        this.timestamp = requireNonNull(Calendar.getInstance().getTime(), "Must have a timestamp");
-        this.victim = requireNonNull(victim);
-        this.dimension = requireNonNull(dimension);
-        this.position = requireNonNull(position);
-        this.type = requireNonNull(type);
+        this(UUID.randomUUID(), Calendar.getInstance().getTime(), victim, dimension, position, type, type, killer);
+    }
+
+    protected PlayerDeath(UUID uuid, Date timestamp, Victim victim, String dimension, Vec3 position, String type,
+        String killer, String message) {
+        this.id = requireNonNull(uuid, "UUID cannot be null");
+        this.timestamp = requireNonNull(timestamp, "Must have a timestamp");
+        this.victim = requireNonNull(victim, "Must have a victim");
+        this.dimension = requireNonNull(dimension, "Must have a dimension");
+        this.position = requireNonNull(position, "Must have a position");
+        this.type = type;
         this.killer = killer;
         this.message = message;
     }
@@ -77,9 +82,10 @@ public class PlayerDeath {
         }
 
         // Since we know they're the same class...
+        // Please note that we are DELIBERATELY not checking the UUID since each time
+        // this object is constructed, it gets a random one.
         PlayerDeath other = (PlayerDeath) obj;
-        return this.id.equals(other.id)
-            && this.timestamp.equals(other.timestamp)
+        return this.timestamp.equals(other.timestamp)
             && this.victim.equals(other.victim)
             && this.dimension.equals(other.dimension)
             && this.position.equals(other.position)
