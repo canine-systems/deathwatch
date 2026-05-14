@@ -38,7 +38,7 @@ jobs:
           cache: gradle
       - id: info
         run: echo "version=1.${{ github.run_number }}" >> "$GITHUB_OUTPUT"
-      - run: ./gradlew -Pversion=${{ steps.info.outputs.version }} build
+      - run: ./gradlew -Pmod_version=${{ steps.info.outputs.version }} build
       - run: gh release create --title "Build ${{ steps.info.outputs.version }}" ${{ steps.info.outputs.version }} build/libs/deathwatch-${{ steps.info.outputs.version }}.jar
         env:
           GH_TOKEN: ${{ github.token }}
