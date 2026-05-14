@@ -37,7 +37,7 @@ jobs:
           distribution: 'temurin'
           cache: gradle
       - id: info
-        run: echo "version=1.${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+        run: echo "version=2.${{ github.run_number }}" >> "$GITHUB_OUTPUT"
       - run: ./gradlew -Pmod_version=${{ steps.info.outputs.version }} build
       - run: gh release create --title "Build ${{ steps.info.outputs.version }}" ${{ steps.info.outputs.version }} build/libs/deathwatch-${{ steps.info.outputs.version }}.jar
         env:
