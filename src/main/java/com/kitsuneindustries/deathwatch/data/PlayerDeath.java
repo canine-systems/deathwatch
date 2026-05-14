@@ -1,93 +1,42 @@
 package com.kitsuneindustries.deathwatch.data;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.Instant;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.kitsuneindustries.deathwatch.data.serialize.Vec3Deserializer;
+import com.kitsuneindustries.deathwatch.data.serialize.Vec3Serializer;
 
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonSerialize;
 
-public class PlayerDeath {
-    private UUID id; // JSON representation can probably use uuid.toString(),
-                     // UUID.fromString(uuid_str)
+@JsonSerialize
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+public record PlayerDeath(
+    @Nonnull UUID uuid,
+    long timestamp,
+    @Nonnull Victim victim,
+    @Nonnull String dimension,
+    @Nonnull @JsonSerialize(using = Vec3Serializer.class) @JsonDeserialize(using = Vec3Deserializer.class) Vec3 position,
+    @Nonnull String type,
+    @Nullable String killer,
+    @Nullable String message) {
+    public PlayerDeath {
+        Objects.requireNonNull(uuid, "UUID must be provided");
+        Objects.requireNonNull(victim, "Victim must be provided");
+        Objects.requireNonNull(dimension, "Dimension must be provided");
+        // Unfortunately, for a while the json logs dropped position, so this will
+        // prevent this class from reading older logs
+        Objects.requireNonNull(position, "Position must be provided");
+        Objects.requireNonNull(type, "Death type must be provided");
 
-    private Date timestamp;
-
-    private Victim victim; // needed for victim.getDisplayName(), victim.getUUID();
-
-    private String dimension;
-
-    private Vec3 position; // needs JSON representation
-
-    private String type;
-    private String killer;
-    private String message;
-
-    public Date getTimestamp() {
-        return timestamp;
-    }
-
-    public Victim getVictim() {
-        return victim;
-    }
-
-    public String getDimension() {
-        return dimension;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getKiller() {
-        return killer;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    private PlayerDeath(Victim victim, String dimension, Vec3 position, String type, String killer,
-        String message) {
-        this.id = UUID.randomUUID();
-        this.timestamp = Calendar.getInstance().getTime();
-        this.victim = victim;
-        this.dimension = dimension;
-        this.position = position;
-        this.type = type;
-        this.killer = killer;
-        this.message = message;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-
-        // builder.append(String.format("%s - %s(%s) ", timestamp,
-        // victim.getDisplayName(), victim.getUUID()));
-        builder.append(String.format("%s - %s(%s) ", timestamp, this.victim.getDisplayName(), this.victim.getUUID()));
-        builder.append(String.format("died at [%f, %f, %f] ", position.x(), position.y(), position.z()));
-
-        if (dimension != null) {
-            builder.append(String.format("in %s ", dimension));
-        }
-
-        if (type != null) {
-            builder.append(String.format("Damage type: %s ", type));
-        }
-
-        if (killer != null) {
-            builder.append(String.format("Killer: %s ", killer));
-        }
-
-        if (message != null) {
-            builder.append(String.format("Message: %s ", message));
-        }
-
-        return builder.toString();
     }
 
     public static Builder newBuilder(@Nonnull net.minecraft.world.entity.player.Player player) {
@@ -109,16 +58,20 @@ public class PlayerDeath {
 
         public PlayerDeath build() {
             Entity killer = source != null ? source.getEntity() : null;
+            Victim victim = new Victim(
+                playerEntity.getUUID(),
+                playerEntity.getDisplayName().getString());
 
             return new PlayerDeath(
-                new Victim(playerEntity),
+                UUID.randomUUID(),
+                Instant.now().toEpochMilli(),
+                victim,
                 playerEntity.level().dimension().location().toString(), // Dimension name
-                playerEntity.position(),
+                playerEntity.position(), // Player Position
                 source != null ? source.type().msgId() : null, // Damage type
                 killer != null ? killer.getDisplayName().getString() : null, // killer
                 playerEntity.getCombatTracker().getDeathMessage().getString() // Death message
             );
         }
     }
-
 }
