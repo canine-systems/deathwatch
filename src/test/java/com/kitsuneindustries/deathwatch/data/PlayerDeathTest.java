@@ -28,7 +28,6 @@ public class PlayerDeathTest {
         timestamp = Instant.now().toEpochMilli();
         position = new Vec3(xyzRange.nextDouble(), xyzRange.nextDouble(), xyzRange.nextDouble());
         victim = new Victim(UUID.randomUUID(), "PlayerName");
-
     }
 
     @Test
@@ -55,7 +54,6 @@ public class PlayerDeathTest {
 
     @Test
     void testSerializeDeserialize() {
-
         ObjectMapper om = new ObjectMapper();
 
         PlayerDeath expected = new PlayerDeath(uuid,
@@ -72,7 +70,5 @@ public class PlayerDeathTest {
         PlayerDeath actual = om.readValue(jsonString, PlayerDeath.class);
 
         assertEquals(expected, actual, "Deserialized version doesn't match original");
-
     }
-
 }
