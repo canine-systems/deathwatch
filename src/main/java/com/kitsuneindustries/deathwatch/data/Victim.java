@@ -1,27 +1,18 @@
 package com.kitsuneindustries.deathwatch.data;
 
+import java.util.Objects;
 import java.util.UUID;
 
-public class Victim {
-    UUID uuid;
+import javax.annotation.Nonnull;
 
-    String displayName;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-    public UUID getUUID() {
-        return uuid;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    Victim(net.minecraft.world.entity.player.Player playerEntity) {
-        this.uuid = playerEntity.getUUID();
-        this.displayName = playerEntity.getDisplayName().getString();
-    }
-
-    Victim(UUID uuid, String displayName) {
-        this.uuid = uuid;
-        this.displayName = displayName;
+@JsonIgnoreProperties({ "icon" })
+public record Victim(
+    @Nonnull UUID uuid,
+    @Nonnull String displayName) {
+    public Victim {
+        Objects.requireNonNull(uuid, "UUID must be provided");
+        Objects.requireNonNull(displayName, "Display name must be provided");
     }
 }
